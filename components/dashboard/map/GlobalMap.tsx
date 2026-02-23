@@ -13,6 +13,7 @@ import { engineers as allEngineers } from '@/data/dashboard/engineers';
 import { EngineerMarker } from './EngineerMarker';
 import { EngineerTooltip } from './EngineerTooltip';
 import { TerminatorOverlay } from './TerminatorOverlay';
+import { ClientOnly } from '@/lib/hooks/client-only';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -54,14 +55,18 @@ export function GlobalMap({
           fill="transparent"
           id="sphere"
         />
-        <Graticule stroke="rgba(255, 255, 255, 0.05)" strokeWidth={0.5} />
+        <ClientOnly>
+          <Graticule stroke="rgba(255, 255, 255, 0.05)" strokeWidth={0.5} />
+        </ClientOnly>
 
         {/* Terminator (Day/Night) Overlay */}
         {/* We place it below geographies to darken the oceans as well, or above to darken everything.
             The design says "shadow cast over map", so we put it over the geographies.
             However, doing this with D3 directly in the SVG path means we need to ensure the projection matches.
             Wait, I'll put it here to overlay on everything. */}
-        <TerminatorOverlay />
+        <ClientOnly>
+          <TerminatorOverlay />
+        </ClientOnly>
 
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
