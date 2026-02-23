@@ -1,0 +1,193 @@
+import {
+  Engineer,
+  EngineerRole,
+  EngineerStatus,
+  Team,
+} from '@/models/engineer';
+
+export const engineers: Engineer[] = [
+  {
+    id: 'eng-001',
+    name: 'Sarah Chen',
+    avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
+    role: EngineerRole.PRIMARY,
+    team: Team.PLATFORM,
+    location: {
+      city: 'San Francisco',
+      country: 'USA',
+      coordinates: [-122.4194, 37.7749],
+    },
+    status: EngineerStatus.AWAKE,
+    shift: {
+      start: '09:00',
+      end: '17:00',
+      timezone: 'America/Los_Angeles',
+    },
+    contact: {
+      slack: '@sarahc',
+      phone: '+1-555-0123',
+      email: 'sarah@example.com',
+    },
+  },
+  {
+    id: 'eng-002',
+    name: 'Marcus Johnson',
+    avatarUrl: 'https://i.pravatar.cc/150?u=marcus',
+    role: EngineerRole.SECONDARY,
+    team: Team.PLATFORM,
+    location: {
+      city: 'London',
+      country: 'UK',
+      coordinates: [-0.1276, 51.5074],
+    },
+    status: EngineerStatus.AWAKE,
+    shift: {
+      start: '09:00',
+      end: '17:00',
+      timezone: 'Europe/London',
+    },
+    contact: {
+      slack: '@marcusj',
+      phone: '+44-20-7123-4567',
+      email: 'marcus@example.com',
+    },
+  },
+  {
+    id: 'eng-003',
+    name: 'Yuki Tanaka',
+    avatarUrl: 'https://i.pravatar.cc/150?u=yuki',
+    role: EngineerRole.ESCALATION,
+    team: Team.INFRA,
+    location: {
+      city: 'Tokyo',
+      country: 'Japan',
+      coordinates: [139.6917, 35.6895],
+    },
+    status: EngineerStatus.SLEEPING,
+    shift: {
+      start: '09:00',
+      end: '17:00',
+      timezone: 'Asia/Tokyo',
+    },
+    contact: {
+      slack: '@yukit',
+      phone: '+81-3-1234-5678',
+      email: 'yuki@example.com',
+    },
+  },
+  {
+    id: 'eng-004',
+    name: 'Elena Rodriguez',
+    avatarUrl: 'https://i.pravatar.cc/150?u=elena',
+    role: EngineerRole.PRIMARY,
+    team: Team.PRODUCT,
+    location: {
+      city: 'Madrid',
+      country: 'Spain',
+      coordinates: [-3.7038, 40.4168],
+    },
+    status: EngineerStatus.AWAKE,
+    shift: {
+      start: '10:00',
+      end: '18:00',
+      timezone: 'Europe/Madrid',
+    },
+    contact: {
+      slack: '@elenar',
+      phone: '+34-91-123-4567',
+      email: 'elena@example.com',
+    },
+  },
+  {
+    id: 'eng-005',
+    name: 'Alexei Ivanov',
+    avatarUrl: 'https://i.pravatar.cc/150?u=alexei',
+    role: EngineerRole.SECONDARY,
+    team: Team.INFRA,
+    location: {
+      city: 'Berlin',
+      country: 'Germany',
+      coordinates: [13.405, 52.52],
+    },
+    status: EngineerStatus.AWAKE,
+    shift: {
+      start: '09:00',
+      end: '17:00',
+      timezone: 'Europe/Berlin',
+    },
+    contact: {
+      slack: '@alexeii',
+      phone: '+49-30-1234567',
+      email: 'alexei@example.com',
+    },
+  },
+  {
+    id: 'eng-006',
+    name: 'Priya Patel',
+    avatarUrl: 'https://i.pravatar.cc/150?u=priya',
+    role: EngineerRole.PRIMARY,
+    team: Team.SRE,
+    location: {
+      city: 'Mumbai',
+      country: 'India',
+      coordinates: [72.8777, 19.076],
+    },
+    status: EngineerStatus.DND,
+    shift: {
+      start: '14:00',
+      end: '22:00',
+      timezone: 'Asia/Kolkata',
+    },
+    contact: {
+      slack: '@priyap',
+      phone: '+91-22-1234-5678',
+      email: 'priya@example.com',
+    },
+  },
+  {
+    id: 'eng-007',
+    name: 'David Kim',
+    avatarUrl: 'https://i.pravatar.cc/150?u=david',
+    role: EngineerRole.SECONDARY,
+    team: Team.PRODUCT,
+    location: {
+      city: 'Sydney',
+      country: 'Australia',
+      coordinates: [151.2093, -33.8688],
+    },
+    status: EngineerStatus.SLEEPING,
+    shift: {
+      start: '09:00',
+      end: '17:00',
+      timezone: 'Australia/Sydney',
+    },
+    contact: {
+      slack: '@davidk',
+      phone: '+61-2-1234-5678',
+      email: 'david@example.com',
+    },
+  },
+  {
+    id: 'eng-008',
+    name: 'Fatima Al-Sayed',
+    avatarUrl: 'https://i.pravatar.cc/150?u=fatima',
+    role: EngineerRole.ESCALATION,
+    team: Team.PLATFORM,
+    location: {
+      city: 'Dubai',
+      country: 'UAE',
+      coordinates: [55.2708, 25.2048],
+    },
+    status: EngineerStatus.AWAKE,
+    shift: {
+      start: '10:00',
+      end: '18:00',
+      timezone: 'Asia/Dubai',
+    },
+    contact: {
+      slack: '@fatimaa',
+      phone: '+971-4-123-4567',
+      email: 'fatima@example.com',
+    },
+  },
+];
