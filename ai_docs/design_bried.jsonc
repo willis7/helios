@@ -1,0 +1,70 @@
+{
+	"projectInfo": {
+		"name": "On-Call Follow the Sun Visualizer",
+		"description": "A global dashboard visualizing active on-call engineers, their locations, and the real-time day/night terminator line across the world.",
+	},
+	"globalSettings": {
+		"theme": "System preference with manual toggle",
+		"lightModeStrategy": "Invert map base to a light, clean geography. Sidebar becomes white/light-gray with dark text. The green accent remains for active states, and the night overlay on the map becomes a subtle translucent dark blue.",
+		"darkModeStrategy": "Deep zinc/neutral grays for backgrounds, high-contrast white text, neon green glowing accents for active primary on-call, and a profound dark overlay for night regions on the map.",
+	},
+	"breakpoints": {
+		"sm": "640px", // Mobile: Map takes full screen, sidebar becomes a bottom sheet or toggleable drawer
+		"md": "768px", // Tablet: Split view begins (sidebar ~30%, map ~70%)
+		"lg": "1024px", // Desktop: Sidebar fixed at ~320px width
+		"xl": "1280px", // Large Desktop: Map expands, UI scales slightly for larger displays
+		"2xl": "1536px", // Ultra-wide: Max width constraints on sidebar, map fills remaining space
+	},
+	"colorPalette": {
+		"primary": {
+			"default": "#4ade80", // Bright mint/neon green (from the active route/selected state)
+			"hover": "#22c55e",
+			"glow": "rgba(74, 222, 128, 0.2)", // Used for the soft border glow on active list items
+		},
+		"secondary": {
+			"default": "#ffffff", // Crisp white for primary texts and icons in dark mode
+			"muted": "#a1a1aa", // Muted text for secondary information (timezones, roles)
+		},
+		"grays": {
+			"900": "#09090b", // Deepest map background (oceans/unfocused areas in dark mode)
+			"800": "#18181b", // Sidebar background and map landmasses
+			"700": "#27272a", // Input fields, unselected list item hover states, subtle borders
+			"600": "#3f3f46", // Borders for active input fields
+		},
+		"accents": {
+			"terminatorNight": "rgba(0, 0, 0, 0.5)", // The shadow cast over the map for night time
+			"sunHighlight": "#fbbf24", // Warm yellow for plotting the sun's exact zenith point
+			"statusPrimary": "#3b82f6", // Blue for Primary On-Call indicator (if differentiating from green)
+			"statusSecondary": "#f59e0b", // Amber for Secondary On-Call indicator
+			"statusSleeping": "#ef4444", // Red/Gray for Do Not Disturb / Asleep
+		},
+	},
+	"typography": {
+		"fontFamily": "Inter, system-ui, sans-serif",
+		"hierarchy": {
+			"h1": "1.25rem (20px) Bold", // App Title
+			"h2": "1rem (16px) SemiBold", // Engineer Name
+			"body": "0.875rem (14px) Regular", // Input text, Filter text
+			"caption": "0.75rem (12px) Medium", // Subtitles (e.g., "London, UK • Primary 'til 6pm")
+		},
+	},
+	"components": {
+		"sidebar": {
+			"header": "Contains Back button, App Logo/Title, and a Theme/Info icon.",
+			"searchBar": "Pill-shaped input with a magnifying glass icon, dark gray background, subtle border.",
+			"filters": "Two dropdowns ('Team', 'Role') and a 'More Filters' button with an icon.",
+			"list": {
+				"item": "Card containing the engineer's avatar (replacing store logo), name, location/local time, shift duration.",
+				"activeState": "Surrounded by a 1px primary green border with a subtle green outer glow. Used to denote the currently active on-call engineer.",
+				"icons": "Right-aligned icons indicating contact preference (Slack/Phone) and current status (Awake/Asleep emoji).",
+			},
+		},
+		"mapArea": {
+			"base": "Global map projection optimized for dark mode.",
+			"terminatorOverlay": "A dynamic polygon shading the nighttime portion of the Earth, updating in real-time.",
+			"markers": "Avatar circles with small badges underneath showing current local time.",
+			"connections": "A glowing primary green line connecting the current Primary on-call to the Secondary/Escalation point, replacing the driving route.",
+			"tooltip": "Glassmorphism card (blurred dark background, 1px subtle border) appearing on marker hover, displaying quick contact buttons (Slack, Phone, Email).",
+		},
+	},
+}
