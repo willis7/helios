@@ -15,7 +15,8 @@ function getTerminator(time: Date) {
   const day = Math.floor(diff / (1000 * 60 * 60 * 24));
 
   // Fractional year in radians
-  const gamma = ((2 * Math.PI) / 365) * (day - 1 + (time.getHours() - 12) / 24);
+  const gamma =
+    ((2 * Math.PI) / 365) * (day - 1 + (time.getUTCHours() - 12) / 24);
 
   // Equation of time (in minutes)
   const eqTime =
@@ -38,14 +39,14 @@ function getTerminator(time: Date) {
 
   const declDegrees = decl * (180 / Math.PI);
 
-  // Time offset in minutes
-  const timeOffset = eqTime - 4 * time.getTimezoneOffset();
+  // Time offset in minutes (using UTC, no timezone offset needed)
+  const timeOffset = eqTime;
 
   // True solar time in minutes
   const tst =
-    time.getHours() * 60 +
-    time.getMinutes() +
-    time.getSeconds() / 60 +
+    time.getUTCHours() * 60 +
+    time.getUTCMinutes() +
+    time.getUTCSeconds() / 60 +
     timeOffset;
 
   // Solar hour angle in degrees
@@ -151,7 +152,7 @@ export function TerminatorOverlay() {
   return (
     <path
       d={path}
-      className="fill-black/30 dark:fill-black/50 transition-all duration-1000"
+      className="fill-yellow-500/10 dark:fill-yellow-400/10 transition-all duration-1000"
       style={{ pointerEvents: 'none' }}
     />
   );

@@ -12,7 +12,6 @@ import { Engineer } from '@/models/engineer';
 import { engineers as allEngineers } from '@/data/dashboard/engineers';
 import { EngineerMarker } from './EngineerMarker';
 import { EngineerTooltip } from './EngineerTooltip';
-import { HandoffRoute } from './HandoffRoute';
 import { TerminatorOverlay } from './TerminatorOverlay';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -31,13 +30,14 @@ export function GlobalMap({
 
   const activeEngineer = allEngineers.find((e) => e.id === activeEngineerId);
 
-  // Find a secondary engineer for the handoff route demo
-  // In a real app, this would be computed based on on-call schedules
-  const escalationEngineer = activeEngineer
-    ? allEngineers.find(
-        (e) => e.id !== activeEngineer.id && e.role !== 'Primary',
-      )
-    : null;
+  // Sort engineers so active and hovered are drawn last (on top)
+  const sortedEngineers = [...allEngineers].sort((a, b) => {
+    if (a.id === hoveredEngineer?.id) return 1;
+    if (b.id === hoveredEngineer?.id) return -1;
+    if (a.id === activeEngineerId) return 1;
+    if (b.id === activeEngineerId) return -1;
+    return 0;
+  });
 
   return (
     <div className="relative w-full h-full bg-[#09090b] overflow-hidden">
@@ -75,18 +75,18 @@ export function GlobalMap({
                 style={{
                   default: {
                     outline: 'none',
-                    fill: '#18181b',
-                    stroke: '#27272a',
+                    fill: '#3f3f46',
+                    stroke: '#52525b',
                   },
                   hover: {
                     outline: 'none',
-                    fill: '#27272a',
-                    stroke: '#3f3f46',
+                    fill: '#52525b',
+                    stroke: '#71717a',
                   },
                   pressed: {
                     outline: 'none',
-                    fill: '#27272a',
-                    stroke: '#3f3f46',
+                    fill: '#52525b',
+                    stroke: '#71717a',
                   },
                 }}
               />
@@ -94,16 +94,8 @@ export function GlobalMap({
           }
         </Geographies>
 
-        {/* Handoff Route Line */}
-        {activeEngineer && escalationEngineer && (
-          <HandoffRoute
-            primary={activeEngineer}
-            secondary={escalationEngineer}
-          />
-        )}
-
         {/* Engineer Markers */}
-        {allEngineers.map((eng) => (
+        {sortedEngineers.map((eng) => (
           <EngineerMarker
             key={eng.id}
             engineer={eng}
