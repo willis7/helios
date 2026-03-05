@@ -14,8 +14,7 @@ import { EngineerMarker } from './EngineerMarker';
 import { EngineerTooltip } from './EngineerTooltip';
 import { TerminatorOverlay } from './TerminatorOverlay';
 import { ClientOnly } from '@/lib/hooks/client-only';
-
-const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+import geographyData from '@/data/world/countries-110m.json';
 
 interface GlobalMapProps {
   activeEngineerId: string | null;
@@ -62,7 +61,7 @@ export function GlobalMap({
         <TerminatorOverlay />
 
         {/* Dark base layer - always visible (night areas) */}
-        <Geographies geography={geoUrl}>
+        <Geographies geography={geographyData}>
           {({ geographies }) =>
             geographies.map((geo) => (
               <Geography
