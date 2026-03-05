@@ -97,7 +97,11 @@ function getDaylightPath(time: Date) {
   };
 }
 
-export function TerminatorOverlay() {
+interface TerminatorOverlayProps {
+  customTime?: Date;
+}
+
+export function TerminatorOverlay({ customTime }: TerminatorOverlayProps) {
   const [path, setPath] = useState<string>('');
 
   useEffect(() => {
@@ -105,7 +109,8 @@ export function TerminatorOverlay() {
       const projection = geoNaturalEarth1().scale(160).translate([400, 300]);
       const pathGenerator = geoPath().projection(projection);
 
-      const dayGeoJSON = getDaylightPath(new Date());
+      const timeToUse = customTime ?? new Date();
+      const dayGeoJSON = getDaylightPath(timeToUse);
       // @ts-ignore
       const d = pathGenerator(dayGeoJSON);
 
@@ -115,10 +120,13 @@ export function TerminatorOverlay() {
     };
 
     updateTerminator();
-    const interval = setInterval(updateTerminator, 60000);
 
-    return () => clearInterval(interval);
-  }, []);
+    // Only auto-update if no custom time is set
+    if (!customTime) {
+      const interval = setInterval(updateTerminator, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [customTime]);
 
   if (!path) {
     return (

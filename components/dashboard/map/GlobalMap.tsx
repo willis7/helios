@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   ComposableMap,
   Geographies,
@@ -13,6 +13,7 @@ import { engineers as allEngineers } from '@/data/dashboard/engineers';
 import { EngineerMarker } from './EngineerMarker';
 import { EngineerTooltip } from './EngineerTooltip';
 import { TerminatorOverlay } from './TerminatorOverlay';
+import { TimeStepper } from './TimeStepper';
 import { ClientOnly } from '@/lib/hooks/client-only';
 import geographyData from '@/data/world/countries-110m.json';
 
@@ -27,6 +28,14 @@ export function GlobalMap({
 }: GlobalMapProps) {
   const [hoveredEngineer, setHoveredEngineer] = useState<Engineer | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [timeOffset, setTimeOffset] = useState(0);
+
+  const customTime = useMemo(() => {
+    if (timeOffset === 0) return undefined;
+    const date = new Date();
+    date.setHours(date.getHours() + timeOffset);
+    return date;
+  }, [timeOffset]);
 
   const activeEngineer = allEngineers.find((e) => e.id === activeEngineerId);
 
@@ -58,7 +67,7 @@ export function GlobalMap({
           <Graticule stroke="rgba(255, 255, 255, 0.05)" strokeWidth={0.5} />
         </ClientOnly>
 
-        <TerminatorOverlay />
+        <TerminatorOverlay customTime={customTime} />
 
         {/* Dark base layer - always visible (night areas) */}
         <Geographies geography={geographyData}>
@@ -139,6 +148,11 @@ export function GlobalMap({
           />
         ))}
       </ComposableMap>
+
+      {/* Time Stepper - positioned top right */}
+      <div className="absolute top-4 right-4 z-30">
+        <TimeStepper timeOffset={timeOffset} onOffsetChange={setTimeOffset} />
+      </div>
 
       {/* Tooltip rendered outside SVG for better HTML rendering */}
       <div id="map-container" className="absolute inset-0 pointer-events-none">
