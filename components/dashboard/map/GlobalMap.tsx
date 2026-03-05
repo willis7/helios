@@ -59,39 +59,55 @@ export function GlobalMap({
           <Graticule stroke="rgba(255, 255, 255, 0.05)" strokeWidth={0.5} />
         </ClientOnly>
 
-        {/* Terminator (Day/Night) Overlay */}
-        {/* We place it below geographies to darken the oceans as well, or above to darken everything.
-            The design says "shadow cast over map", so we put it over the geographies.
-            However, doing this with D3 directly in the SVG path means we need to ensure the projection matches.
-            Wait, I'll put it here to overlay on everything. */}
-        <ClientOnly>
-          <TerminatorOverlay />
-        </ClientOnly>
+        <TerminatorOverlay />
 
+        {/* Dark base layer - always visible (night areas) */}
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => (
               <Geography
                 key={geo.rsmKey}
                 geography={geo}
-                fill="var(--map-landmass)"
-                stroke="var(--map-border)"
+                fill="#3f3f46"
+                stroke="#52525b"
                 strokeWidth={0.5}
                 style={{
-                  default: {
-                    outline: 'none',
-                    fill: '#3f3f46',
-                    stroke: '#52525b',
-                  },
-                  hover: {
-                    outline: 'none',
-                    fill: '#52525b',
-                    stroke: '#71717a',
-                  },
+                  default: { outline: 'none', fill: '#3f3f46' },
+                  hover: { outline: 'none', fill: '#52525b' },
+                  pressed: { outline: 'none', fill: '#52525b' },
+                }}
+              />
+            ))
+          }
+        </Geographies>
+
+        {/* Natural earth image - clipped to daylight areas only */}
+        <image
+          href="/static/images/earth-natural-projected.png"
+          x="0"
+          y="0"
+          width="800"
+          height="600"
+          clipPath="url(#daylight-clip)"
+          style={{ pointerEvents: 'none' }}
+        />
+
+        {/* Transparent top layer for borders and hover states */}
+        <Geographies geography={geoUrl}>
+          {({ geographies }) =>
+            geographies.map((geo) => (
+              <Geography
+                key={`top-${geo.rsmKey}`}
+                geography={geo}
+                fill="transparent"
+                stroke="#52525b"
+                strokeWidth={0.5}
+                style={{
+                  default: { outline: 'none', fill: 'transparent' },
+                  hover: { outline: 'none', fill: 'rgba(255, 255, 255, 0.15)' },
                   pressed: {
                     outline: 'none',
-                    fill: '#52525b',
-                    stroke: '#71717a',
+                    fill: 'rgba(255, 255, 255, 0.2)',
                   },
                 }}
               />
