@@ -91,6 +91,29 @@ export function GlobalMap({
           style={{ pointerEvents: 'none' }}
         />
 
+        {/* Transparent layer for borders and hover states */}
+        <Geographies geography={geographyData}>
+          {({ geographies }) =>
+            geographies.map((geo) => (
+              <Geography
+                key={`border-${geo.rsmKey}`}
+                geography={geo}
+                fill="transparent"
+                stroke="#52525b"
+                strokeWidth={0.5}
+                style={{
+                  default: { outline: 'none', fill: 'transparent' },
+                  hover: { outline: 'none', fill: 'rgba(255, 255, 255, 0.15)' },
+                  pressed: {
+                    outline: 'none',
+                    fill: 'rgba(255, 255, 255, 0.2)',
+                  },
+                }}
+              />
+            ))
+          }
+        </Geographies>
+
         {/* Engineer Markers */}
         {sortedEngineers.map((eng) => (
           <EngineerMarker
