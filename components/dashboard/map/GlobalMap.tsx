@@ -83,7 +83,7 @@ export function GlobalMap({
 
         {/* Natural earth image - clipped to daylight areas only */}
         <image
-          href="/static/images/earth-natural-projected.png"
+          href="/static/images/earth-natural-projected.webp"
           x="0"
           y="0"
           width="800"
@@ -91,29 +91,6 @@ export function GlobalMap({
           clipPath="url(#daylight-clip)"
           style={{ pointerEvents: 'none' }}
         />
-
-        {/* Transparent top layer for borders and hover states */}
-        <Geographies geography={geoUrl}>
-          {({ geographies }) =>
-            geographies.map((geo) => (
-              <Geography
-                key={`top-${geo.rsmKey}`}
-                geography={geo}
-                fill="transparent"
-                stroke="#52525b"
-                strokeWidth={0.5}
-                style={{
-                  default: { outline: 'none', fill: 'transparent' },
-                  hover: { outline: 'none', fill: 'rgba(255, 255, 255, 0.15)' },
-                  pressed: {
-                    outline: 'none',
-                    fill: 'rgba(255, 255, 255, 0.2)',
-                  },
-                }}
-              />
-            ))
-          }
-        </Geographies>
 
         {/* Engineer Markers */}
         {sortedEngineers.map((eng) => (
