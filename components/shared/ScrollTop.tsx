@@ -1,23 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export const ScrollTop = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleWindowScroll = () => {
-      if (window.scrollY > 50) setShow(true);
-      else setShow(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShow(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleWindowScroll);
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleWindowScroll);
   }, []);
 
-  const handleScrollTop = () => {
-    window.scrollTo({ top: 0 });
-  };
+  const handleScrollTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <div

@@ -2,16 +2,10 @@
 
 import { usePathname } from 'next/navigation';
 import Link from './Link';
-import React, {
-  useState,
-  useEffect,
-  Children,
-  ReactNode,
-  ReactElement,
-} from 'react';
+import React, { useMemo, useCallback } from 'react';
 
 interface ActiveLinkProps {
-  children: ReactNode;
+  children: React.ReactNode;
   activeClassName: string;
   href: string;
   as?: string;
@@ -24,43 +18,50 @@ export const ActiveLink = ({
   ...props
 }: ActiveLinkProps) => {
   const routePathname = usePathname();
-  const [isActive, setIsActive] = useState(false);
 
-  useEffect(() => {
-    // Check if the router fields are updated client-side
-    // Dynamic route will be matched via props.as
-    // Static route will be matched via props.href
-    const linkPathname = new URL(props.as || props.href, location.href)
-      .pathname;
-
-    // Using URL().pathname to get rid of query and hash
-    const activePathname = new URL(routePathname, location.href).pathname;
-
-    const newIsActive = linkPathname === activePathname;
-
-    if (newIsActive !== isActive) {
-      setIsActive(newIsActive);
+  // Derived state using useMemo - avoids useState and infinite loop risk
+  const isActive = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return false;
     }
-  }, [routePathname, props.as, props.href, isActive]);
 
-  const processChildren = (children: ReactNode): ReactNode => {
-    return Children.map(children, (child) => {
-      if (!React.isValidElement(child)) {
-        return child;
-      }
+    try {
+      const linkPathname = new URL(props.as || props.href, window.location.href)
+        .pathname;
+      const activePathname = new URL(routePathname, window.location.href)
+        .pathname;
+      return linkPathname === activePathname;
+    } catch {
+      return false;
+    }
+  }, [routePathname, props.as, props.href]);
 
-      const childElement = child as ReactElement<{ className?: string }>;
-      const childClassName = childElement.props.className || '';
-      const newClassName = isActive
-        ? `${childClassName} ${activeClassName}`.trim()
-        : childClassName;
+  // Memoized to prevent unnecessary recreations
+  const processChildren = useCallback(
+    (children: React.ReactNode): React.ReactNode => {
+      if (!children) return children;
 
-      return React.cloneElement(childElement, {
-        ...childElement.props,
-        className: newClassName || undefined,
+      return React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) {
+          return child;
+        }
+
+        const childElement = child as React.ReactElement<{
+          className?: string;
+        }>;
+        const childClassName = childElement.props.className || '';
+        const newClassName = isActive
+          ? `${childClassName} ${activeClassName}`.trim()
+          : childClassName;
+
+        return React.cloneElement(childElement, {
+          ...childElement.props,
+          className: newClassName || undefined,
+        });
       });
-    });
-  };
+    },
+    [isActive, activeClassName],
+  );
 
   return (
     <Link {...props} href={props.href}>
