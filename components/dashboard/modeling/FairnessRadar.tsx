@@ -40,9 +40,9 @@ const METRICS = [
 
 const COLORS = {
   scenarioA: '#22c55e', // primary.main (green)
-  scenarioB: '#10b981', // secondary.main (emerald)
+  scenarioB: '#3b82f6', // blue for contrast
   scenarioAFill: 'rgba(34, 197, 94, 0.2)',
-  scenarioBFill: 'rgba(16, 185, 129, 0.2)',
+  scenarioBFill: 'rgba(59, 130, 246, 0.2)',
 };
 
 function transformToChartData({
