@@ -1,3 +1,10 @@
+export enum StrategyTemplate {
+  FOLLOW_SUN = 'FOLLOW_SUN',
+  TWELVE_HOUR = 'TWELVE_HOUR',
+  WEEKLY = 'WEEKLY',
+  CUSTOM = 'CUSTOM',
+}
+
 export enum EngineerRole {
   PRIMARY = 'Primary',
   SECONDARY = 'Secondary',
@@ -35,6 +42,35 @@ export interface EngineerContact {
   email: string;
 }
 
+export interface BioRhythm {
+  sleepStart: number; // hour 0-23
+  sleepEnd: number; // hour 0-23
+  businessStart: number; // hour 0-23
+  businessEnd: number; // hour 0-23
+}
+
+export interface ShiftAssignment {
+  engineerId: string;
+  startHour: number; // UTC
+  endHour: number; // UTC
+  strategy: StrategyTemplate;
+}
+
+export interface RiskWindow {
+  startHour: number;
+  endHour: number;
+  probability: number; // 0.0-1.0
+  label: string;
+}
+
+export interface Scenario {
+  id: string;
+  name: string;
+  strategy: StrategyTemplate;
+  shiftAssignments: ShiftAssignment[];
+  riskWindows: RiskWindow[];
+}
+
 export interface Engineer {
   id: string;
   name: string;
@@ -45,4 +81,5 @@ export interface Engineer {
   status: EngineerStatus;
   shift: EngineerShift;
   contact: EngineerContact;
+  bioRhythm?: BioRhythm;
 }

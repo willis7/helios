@@ -1,0 +1,91 @@
+# Product Requirements Document (PRD)
+
+| **Product Name** | Helios: The Human-Centric On-Call Modeler |
+| :--- | :--- |
+| **Version** | 1.0 (MVP) |
+| **Status** | Draft |
+| **Owner** | Product Engineering |
+| **Last Updated** | October 26, 2023 |
+
+---
+
+## 1. Problem Statement
+Engineering Managers in distributed organizations struggle to design on-call rotations that balance **business coverage** (24/7 reliability) with **human sustainability** (sleep, work-life balance).
+
+Current tools (PagerDuty, Opsgenie) are excellent at *executing* schedules but terrible at *modeling* them. They visualize time linearly via UTC, masking the "human cost" of specific shifts. Managers resort to spreadsheets to calculate coverage, often failing to account for local time zones, holidays, and high-traffic windows (e.g., specific sporting events in the betting industry). This leads to burnout, unfair burden distribution, and attrition.
+
+## 2. Product Vision
+A simulation platform that allows managers to input team locations and constraints, apply different rotation strategies (e.g., "Follow the Sun," "12-hour Split"), and generate a comparative analysis of coverage gaps, sleep interruption risks, and "fairness scores" before a schedule is ever published.
+
+## 3. Target Audience
+*   **Primary:** Engineering Managers (EMs) and SRE Leads managing multi-region teams.
+*   **Secondary:** HR/People Ops (monitoring compliance with Working Time Directives).
+
+## 4. Key Goals & Success Metrics
+*   **Goal:** Enable an EM to model 3 distinct rotation scenarios in under 10 minutes.
+*   **Goal:** Visualize "Human Cost" (Sleep interruption probability) alongside "Coverage."
+*   **Metric:** **Fairness Variance** (The standard deviation of unsociable hours worked between Team A and Team B). The tool should minimize this metric.
+
+## 5. Functional Requirements
+
+### 5.1. Team & Geography Setup
+*   **FR-01:** User can define "Teams" with specific locations (Time Zones) and headcounts.
+*   **FR-02:** User can define "Bio-rhythms" for each region.
+    *   *Example:* "Standard Sleep = 11 PM to 7 AM local."
+    *   *Example:* "Business Hours = 9 AM to 6 PM local."
+
+### 5.2. Strategy Modeling
+*   **FR-03:** User can select a template strategy to apply to the timeline.
+    *   *Templates:* "12-hour blocks," "Weekly Rotation," "Follow the Sun," "Custom."
+*   **FR-04:** User can manually adjust handover times via a slider (e.g., slide from 12:00 UTC to 14:00 UTC) and see immediate impact on local times.
+
+### 5.3. Contextual Overlays (The "Betting" Context)
+*   **FR-05:** User can define an "Incident Probability Curve" or "Risk Heatmap."
+    *   *Use Case:* User marks Sundays 13:00-23:00 UTC as "High Risk" (NFL/Premier League traffic).
+*   **FR-06:** System highlights "Danger Zones"—shifts where High Risk overlaps with a Sleep Phase.
+
+### 5.4. Analysis & Comparison
+*   **FR-07:** Side-by-side comparison view of Scenario A vs. Scenario B.
+*   **FR-08:** System calculates a "Burden Score" for each team (see Logic section).
+
+## 6. Algorithm Logic: The "Burden Score"
+
+To quantify fairness, the software must run the following calculation for every agent in the simulation:
+
+```math
+Burden = (H_working * 1) + (H_evening * 1.5) + (H_sleeping * 3 * P_incident)
+```
+
+**Where:**
+*   `H_working`: Hours on-call during business hours.
+*   `H_evening`: Hours on-call during personal time (awake but not working).
+*   `H_sleeping`: Hours on-call during defined sleep hours.
+*   `P_incident`: The probability (0.0 to 1.0) of an alert occurring during that hour.
+
+*The objective is to equalize the **Burden Score** across teams, rather than just equalizing the number of hours on-call.*
+
+## 7. UX / Visualization Concepts
+
+### View 1: The "Sunlight" Timeline
+Instead of a standard calendar grid, the UI shows a horizontal timeline where the background color represents the **human state**, not the team color.
+*   **White Background:** Business Hours.
+*   **Grey Background:** Evening/Personal time.
+*   **Black Background:** Sleeping hours.
+*   **Colored Overlay Bar:** Represents the On-Call shift duration.
+    *   *Visual Cue:* If the On-Call bar crosses a "Black" (sleep) zone, the bar turns **Red** to indicate Burnout Risk.
+
+### View 2: The "Fairness Radar"
+A radar chart comparing the teams (e.g., UK vs US) on four axes:
+1.  **Waking Hours Coverage** (Higher is better)
+2.  **Sleep Interruption Risk** (Lower is better)
+3.  **Weekend Liability** (Lower is better)
+4.  **Handover Friction** (Proximity to start/end of day).
+
+## 8. Non-Functional Requirements
+*   **NFR-01 (Time Zones):** Must handle Daylight Savings Time (DST) edge cases automatically (specifically the 2-week window where UK/US clocks are out of sync).
+*   **NFR-02 (Privacy):** No storing of PII regarding real employee health data or specific addresses.
+*   **NFR-03 (Performance):** Recalculation of the "Burden Score" must happen in <200ms upon adjusting a slider.
+
+## 9. Future Scope (v2)
+*   **Integration:** PagerDuty/Opsgenie API integration to import historical incident density data automatically.
+*   **Cost Calculator:** Estimate overtime/standby pay based on region-specific labor laws and shift differentials.
