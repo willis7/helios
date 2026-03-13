@@ -227,7 +227,7 @@ export function SunlightTimeline({
             {formatHour({ hour: localEndHour, minute: localEndMinute })}
           </span>
           <span className="text-xs text-muted-foreground">
-            {scenarioName} · Local Time
+            {scenarioName} · Shift · Local Time
           </span>
         </div>
       </div>
