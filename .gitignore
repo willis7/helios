@@ -45,6 +45,7 @@ yarn-error.log*
 .env.production.local
 .todos/
 
+# AI Stuff
 .opencode/
 .sidecar/
 .sidecar-agent
@@ -53,3 +54,5 @@ yarn-error.log*
 .sidecar-start.sh
 .sidecar-base
 .td-root
+.playwright-mcp/
+.claude/settings.local.json

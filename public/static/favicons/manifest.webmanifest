@@ -1,7 +1,7 @@
 {
-  "name": "Mevolut",
-  "short_name": "Mevolut",
-  "description": "Manage your money the easy way with Mevolut . Track expenses, send money, and grow your savings – safely and simply. Sign up free today!",
+  "name": "Helios",
+  "short_name": "Helios",
+  "description": "A human-centric on-call modeling platform for global engineering teams. Visualize coverage, sleep risks, and fairness scores across time zones.",
   "dir": "auto",
   "lang": "en-US",
   "display": "standalone",
