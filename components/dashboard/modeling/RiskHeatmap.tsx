@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { RiskWindow } from '@/models/engineer';
 import { cn } from '@/lib/utils';
+import { formatHour, calculateRiskWindows } from '@/lib/scheduling';
 
 interface RiskHeatmapProps {
   riskWindows: RiskWindow[];
@@ -16,43 +17,6 @@ interface TooltipData {
   endHour: number;
   x: number;
   width: number;
-}
-
-function formatHour({ hour }: { hour: number }): string {
-  const h = hour % 24;
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const displayHour = h % 12 || 12;
-  return `${displayHour}:00 ${ampm}`;
-}
-
-function calculateRiskWindows({
-  windows,
-  totalHours = 24,
-}: {
-  windows: RiskWindow[];
-  totalHours?: number;
-}): Array<{
-  left: number;
-  width: number;
-  opacity: number;
-  label: string;
-  startHour: number;
-  endHour: number;
-}> {
-  return windows.map((window) => {
-    const leftPercent = (window.startHour / totalHours) * 100;
-    const widthPercent =
-      ((window.endHour - window.startHour) / totalHours) * 100;
-
-    return {
-      left: leftPercent,
-      width: Math.max(widthPercent, 1),
-      opacity: 0.2 + window.probability * 0.6,
-      label: window.label,
-      startHour: window.startHour,
-      endHour: window.endHour,
-    };
-  });
 }
 
 export function RiskHeatmap({ riskWindows, className }: RiskHeatmapProps) {

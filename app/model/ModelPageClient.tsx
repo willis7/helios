@@ -3,16 +3,11 @@
 import { useState, useCallback, useMemo } from 'react';
 import { ModelingSidebar } from '@/components/dashboard/modeling/ModelingSidebar';
 import { ScenarioComparison } from '@/components/dashboard/modeling/ScenarioComparison';
-import { StrategyTemplate, RiskWindow, Engineer } from '@/models/engineer';
+import { StrategyTemplate, RiskWindow } from '@/models/engineer';
 import { engineers as allEngineers } from '@/data/dashboard/engineers';
 import { ThemeSwitch } from '@/components/shared/ThemeSwitch';
 import { MenuIcon } from 'lucide-react';
-
-interface ShiftConfig {
-  engineerId: string;
-  startHour: number;
-  endHour: number;
-}
+import { generateShiftsFromStrategy, ShiftConfig } from '@/lib/scheduling';
 
 interface ScenarioConfig {
   name: string;
@@ -25,84 +20,6 @@ const DEFAULT_RISK_WINDOWS: RiskWindow[] = [
   { startHour: 22, endHour: 6, probability: 0.7, label: 'Night Risk' },
   { startHour: 12, endHour: 14, probability: 0.4, label: 'Lunch Gap' },
 ];
-
-function getTimezoneOffsetHours({ timezone }: { timezone: string }): number {
-  const now = new Date();
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: timezone,
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false,
-  });
-  const parts = formatter.formatToParts(now);
-  const hour = parseInt(parts.find((p) => p.type === 'hour')?.value || '0', 10);
-  const minute = parseInt(
-    parts.find((p) => p.type === 'minute')?.value || '0',
-    10,
-  );
-  const utcFormatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'UTC',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: false,
-  });
-  const utcParts = utcFormatter.formatToParts(now);
-  const utcHour = parseInt(
-    utcParts.find((p) => p.type === 'hour')?.value || '0',
-    10,
-  );
-  const utcMinute = parseInt(
-    utcParts.find((p) => p.type === 'minute')?.value || '0',
-    10,
-  );
-  let offsetMinutes = hour * 60 + minute - (utcHour * 60 + utcMinute);
-  if (offsetMinutes > 12 * 60) offsetMinutes -= 24 * 60;
-  if (offsetMinutes < -12 * 60) offsetMinutes += 24 * 60;
-  return offsetMinutes / 60;
-}
-
-function generateShiftsFromStrategy({
-  strategy,
-  engineers,
-}: {
-  strategy: StrategyTemplate;
-  engineers: Engineer[];
-}): ShiftConfig[] {
-  return engineers.map((engineer, index) => {
-    let startHour: number;
-    let endHour: number;
-
-    switch (strategy) {
-      case StrategyTemplate.FOLLOW_SUN: {
-        const offsetHours = getTimezoneOffsetHours({
-          timezone: engineer.shift.timezone,
-        });
-        startHour = Math.round((12 + offsetHours + 24) % 24);
-        endHour = (startHour + 8) % 24;
-        break;
-      }
-      case StrategyTemplate.TWELVE_HOUR:
-        startHour = index % 2 === 0 ? 8 : 20;
-        endHour = index % 2 === 0 ? 20 : 8;
-        break;
-      case StrategyTemplate.WEEKLY:
-        startHour = 9;
-        endHour = 17;
-        break;
-      case StrategyTemplate.CUSTOM:
-      default:
-        startHour = 9;
-        endHour = 17;
-        break;
-    }
-
-    return {
-      engineerId: engineer.id,
-      startHour,
-      endHour,
-    };
-  });
-}
 
 export function ModelPageClient() {
   const [scenarioAStrategy, setScenarioAStrategy] = useState<StrategyTemplate>(

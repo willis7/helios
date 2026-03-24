@@ -2,6 +2,13 @@
 
 import { Engineer } from '@/models/engineer';
 import { cn } from '@/lib/utils';
+import {
+  getLocalHour,
+  formatHour,
+  doesShiftCrossSleepZone,
+  getShiftSegments,
+  getZoneColor,
+} from '@/lib/scheduling';
 
 interface SunlightTimelineProps {
   engineer: Engineer;
@@ -64,108 +71,6 @@ function getTimezoneOffset({ timezone }: { timezone: string }): {
     hours: Math.floor(offsetMinutes / 60),
     minutes: Math.abs(offsetMinutes % 60),
   };
-}
-
-function getLocalHour({
-  utcHour,
-  offsetHours,
-  offsetMinutes,
-}: {
-  utcHour: number;
-  offsetHours: number;
-  offsetMinutes: number;
-}): { hour: number; minute: number } {
-  const totalMinutes = utcHour * 60 + offsetHours * 60 + offsetMinutes;
-  const normalizedMinutes = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
-  const hour = Math.floor(normalizedMinutes / 60);
-  const minute = normalizedMinutes % 60;
-  return { hour, minute };
-}
-
-function formatHour({
-  hour,
-  minute = 0,
-}: {
-  hour: number;
-  minute?: number;
-}): string {
-  const h = hour % 24;
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const displayHour = h % 12 || 12;
-  return `${displayHour}:${minute.toString().padStart(2, '0')} ${ampm}`;
-}
-
-function isInSleepZone({ hour }: { hour: number }): boolean {
-  return hour >= 23 || hour < 7;
-}
-
-function isInBusinessHours({ hour }: { hour: number }): boolean {
-  return hour >= 9 && hour < 18;
-}
-
-function doesShiftCrossSleepZone({
-  startHour,
-  endHour,
-}: {
-  startHour: number;
-  endHour: number;
-}): boolean {
-  const normalizedEnd = endHour < startHour ? endHour + 24 : endHour;
-
-  for (let hour = startHour; hour < normalizedEnd; hour++) {
-    const normalizedHour = hour % 24;
-    if (isInSleepZone({ hour: normalizedHour })) {
-      return true;
-    }
-  }
-  return false;
-}
-
-interface ShiftSegment {
-  left: string;
-  width: string;
-}
-
-function getShiftSegments({
-  startHour,
-  endHour,
-}: {
-  startHour: number;
-  endHour: number;
-}): ShiftSegment[] {
-  const segments: ShiftSegment[] = [];
-
-  if (endHour < startHour) {
-    // Shift crosses midnight - split into two segments
-    // First segment: startHour to midnight (24:00)
-    segments.push({
-      left: `${(startHour / 24) * 100}%`,
-      width: `${((24 - startHour) / 24) * 100}%`,
-    });
-    // Second segment: midnight (0:00) to endHour
-    segments.push({
-      left: '0%',
-      width: `${(endHour / 24) * 100}%`,
-    });
-  } else {
-    // Normal shift within same day
-    segments.push({
-      left: `${(startHour / 24) * 100}%`,
-      width: `${((endHour - startHour) / 24) * 100}%`,
-    });
-  }
-
-  return segments;
-}
-
-function getZoneColor({ hour }: { hour: number }): string {
-  if (isInBusinessHours({ hour })) {
-    return 'bg-white';
-  }
-  if (isInSleepZone({ hour })) {
-    return 'bg-zinc-900';
-  }
-  return 'bg-zinc-600';
 }
 
 export function SunlightTimeline({
